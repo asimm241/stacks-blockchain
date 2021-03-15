@@ -181,7 +181,8 @@ impl RunLoop {
         }
 
         let use_test_genesis_data = if let Some(use_test_genesis_chainstate) =
-        self.config.node.use_test_genesis_chainstate {
+            self.config.node.use_test_genesis_chainstate
+        {
             use_test_genesis_chainstate
         } else {
             USE_TEST_GENESIS_CHAINSTATE
