@@ -180,6 +180,8 @@ impl RunLoop {
             event_dispatcher.register_observer(observer);
         }
 
+        // use test genesis data if use_test_genesis_chainstate is true in config
+        // otherwise default to USE_TEST_GENESIS_CHAINSTATE const
         let use_test_genesis_data = if let Some(use_test_genesis_chainstate) =
             self.config.node.use_test_genesis_chainstate
         {
