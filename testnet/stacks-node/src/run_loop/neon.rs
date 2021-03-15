@@ -180,8 +180,15 @@ impl RunLoop {
             event_dispatcher.register_observer(observer);
         }
 
+        let use_test_genesis_data = if let Some(use_test_genesis_chainstate) =
+        self.config.node.use_test_genesis_chainstate {
+            use_test_genesis_chainstate
+        } else {
+            USE_TEST_GENESIS_CHAINSTATE
+        };
+
         let mut atlas_config = AtlasConfig::default(false);
-        let genesis_attachments = GenesisData::new(USE_TEST_GENESIS_CHAINSTATE)
+        let genesis_attachments = GenesisData::new(use_test_genesis_data)
             .read_name_zonefiles()
             .into_iter()
             .map(|z| Attachment::new(z.zonefile_content.as_bytes().to_vec()))
@@ -226,16 +233,16 @@ impl RunLoop {
             first_burnchain_block_hash: coordinator_burnchain_config.first_block_hash,
             first_burnchain_block_height: coordinator_burnchain_config.first_block_height as u32,
             first_burnchain_block_timestamp: coordinator_burnchain_config.first_block_timestamp,
-            get_bulk_initial_lockups: Some(Box::new(|| {
-                get_account_lockups(USE_TEST_GENESIS_CHAINSTATE)
+            get_bulk_initial_lockups: Some(Box::new(move || {
+                get_account_lockups(use_test_genesis_data)
             })),
-            get_bulk_initial_balances: Some(Box::new(|| {
-                get_account_balances(USE_TEST_GENESIS_CHAINSTATE)
+            get_bulk_initial_balances: Some(Box::new(move || {
+                get_account_balances(use_test_genesis_data)
             })),
-            get_bulk_initial_namespaces: Some(Box::new(|| {
-                get_namespaces(USE_TEST_GENESIS_CHAINSTATE)
+            get_bulk_initial_namespaces: Some(Box::new(move || {
+                get_namespaces(use_test_genesis_data)
             })),
-            get_bulk_initial_names: Some(Box::new(|| get_names(USE_TEST_GENESIS_CHAINSTATE))),
+            get_bulk_initial_names: Some(Box::new(move || get_names(use_test_genesis_data))),
         };
 
         let (chain_state_db, receipts) = StacksChainState::open_and_exec(
